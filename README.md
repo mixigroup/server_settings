@@ -158,7 +158,8 @@ ServerSettings autoload this yaml file and define roles.
 
 `#{Rails.root}/config/servers/#{Rails.env}/*.yml`
 
-### For Capistrano2
+### For Capistrano
+#### Capistrano2
 ```ruby
 require  'server_settings/capistrano'
 
@@ -171,8 +172,8 @@ memcached:
   no_release: true
   hosts:
     - 192.168.100.1
-
-### For Capistrano3
+```
+#### For Capistrano3
 
 in Capfile
 
