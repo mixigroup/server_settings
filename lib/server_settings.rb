@@ -56,7 +56,7 @@ class ServerSettings
     end
 
     def load_from_yaml(yaml)
-      config = YAML.load(yaml)
+      config = YAML.safe_load(yaml, permitted_classes: [Symbol], aliases: true)
       config.each do |role, config|
         instance << role_klass(config).new(role, config)
       end
