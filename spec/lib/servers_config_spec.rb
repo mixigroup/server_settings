@@ -12,6 +12,10 @@ role1:
 role2:
   hosts:
     - 3.3.3.3
+
+role3:
+  hosts:
+
 EOF
   }
 
@@ -127,6 +131,7 @@ EOF
     it 'can iterate each server' do
       ServerSettings.load_from_yaml(config1)
       expect { |b|  ServerSettings.each_role(&b) }.to  yield_successive_args([String, Array],
+                                                                             [String, Array],
                                                                              [String, Array])
     end
   end
