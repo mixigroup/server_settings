@@ -4,6 +4,8 @@ class ServerSettings
     attr_reader :properties
     def initialize(hosts, properties)
       @properties = properties
+      return if hosts.nil?
+
       unless hosts.kind_of?(Array)
         raise InvalidHosts, "hosts: #{hosts} is not array"
       end
