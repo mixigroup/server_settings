@@ -4,7 +4,11 @@ class ServerSettings
       name + "_slave#{idx}"
     end
 
-    def self.generate_database_config(db_role, with_slave:true)
+    def self.replica_name(name, suffix, idx)
+      "#{name}_#{suffix}#{idx}"
+    end
+
+    def self.generate_database_config(db_role, with_slave: true, replica_suffix: "replica")
       configuration = {}
       return configuration unless ServerSettings.databases
 
@@ -33,6 +37,12 @@ class ServerSettings
             config[:host] = db.backup if db_role == :backup
             stringify_keys!(config) if defined? Rails
             configuration[slave_name(db.name, idx)] = config
+
+            # AR6.1以降のDB分散機能の replica 向けの設定
+            config = config.dup
+            config[:replica] = true
+            stringify_keys!(config) if defined? Rails
+            configuration[replica_name(db.name, replica_suffix, idx)] = config
           end
         end
       end

@@ -29,7 +29,7 @@ databases: &default
     :backup: 'backup.com'
   no_backup:
     <<: *default
-EOF
+    EOF
   end
   before do
     filepath = "config.yml"
@@ -43,6 +43,11 @@ EOF
   describe ".slave_name" do
     it { expect(ServerSettings::DatabaseConfig.slave_name("hoge", 1)).to eq "hoge_slave1" }
   end
+
+  describe ".replica_name" do
+    it { expect(ServerSettings::DatabaseConfig.replica_name("hoge", "replica", 1)).to eq "hoge_replica1" }
+  end
+
   describe ".generate_database_config" do
     context "check configuration" do
       let(:database_config) { database_config = ServerSettings::DatabaseConfig.generate_database_config(:master) }
@@ -52,6 +57,11 @@ EOF
       context "when has slave" do
         it "contain slave key" do
           expect(database_config["has_slave_slave1"].class).to eq Hash
+          expect(database_config["has_slave_slave1"][:replica]).to be_nil
+        end
+        it "contain replica key" do
+          expect(database_config["has_slave_replica1"].class).to eq Hash
+          expect(database_config["has_slave_replica1"][:replica]).to be true
         end
       end
       context "when has group" do
@@ -63,6 +73,7 @@ EOF
         it "does not exist slave key" do
           no_slave_config = ServerSettings::DatabaseConfig.generate_database_config(:master, with_slave: false)
           expect(no_slave_config.has_key? "has_slave_slave1").to be false
+          expect(no_slave_config.has_key? "has_slave_replica1").to be false
         end
       end
       context "when use backup role" do
